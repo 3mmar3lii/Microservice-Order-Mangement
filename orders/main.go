@@ -31,8 +31,7 @@ func main() {
 	}
 	grpcServer := grpc.NewServer()
 
-	NewGRPCHandler(grpcServer)
-	svc.CreateOrder(context.Background())
+	NewGRPCHandler(grpcServer, svc)
 
 	log.Print("GRPC server start!",grpcAddr)
 

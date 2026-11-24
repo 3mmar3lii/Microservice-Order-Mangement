@@ -38,17 +38,15 @@ func (h *handler) handleCreateOrder(w http.ResponseWriter, r *http.Request) {
 	})
 
 	// Handling gRPC error 
-	rStatus := status.Convert(err)
-	if rStatus != nil {
-		if rStatus.Code() != codes.InvalidArgument {
-			common.WriteError(w, http.StatusBadRequest, rStatus.Message())
-			return 
-		}
-	}
-
-	if err != nil {
-		common.WriteError(w, http.StatusInternalServerError, err.Error())
-	}
+if err != nil {
+    rStatus := status.Convert(err)
+    if rStatus.Code() == codes.InvalidArgument {
+        common.WriteError(w, http.StatusBadRequest, rStatus.Message())
+        return
+    }
+    common.WriteError(w, http.StatusInternalServerError, err.Error())
+    return
+}
 
 	common.WriteJSON(w, http.StatusOK, o)
 }

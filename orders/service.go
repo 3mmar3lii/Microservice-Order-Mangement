@@ -10,6 +10,10 @@ func NewService(store OrderStore) *service {
 	return &service{store}
 }
 
-func (s *service) CreateOrder(context.Context) *OrderStore {
-	return nil
+func (s *service) CreateOrder(ctx context.Context,
+	OrderRequest CreateOrderRequest) (Order, error) {
+
+	return Order{
+		ID: "20",
+	},nil 
 }
