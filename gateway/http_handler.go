@@ -1,10 +1,13 @@
 package main
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/ammar-alaa/common"
 	pb "github.com/ammar-alaa/common/api"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type handler struct {
@@ -24,18 +27,50 @@ func (h *handler) handleCreateOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	o,err := h.client.CreateOrder(r.Context(), &pb.CreateOrderRequest{
+	if err := ValidateItems(items); err != nil {
+		common.WriteError(w,http.StatusBadRequest,err.Error())
+		return 
+	}
+
+	o, err := h.client.CreateOrder(r.Context(), &pb.CreateOrderRequest{
 		CustomerID: cusomerID,
 		Items:      items,
 	})
 
-	if err != nil {
-		common.WriteError(w,http.StatusInternalServerError,err.Error())
+	// Handling gRPC error 
+	rStatus := status.Convert(err)
+	if rStatus != nil {
+		if rStatus.Code() != codes.InvalidArgument {
+			common.WriteError(w, http.StatusBadRequest, rStatus.Message())
+			return 
+		}
 	}
 
-	common.WriteJSON(w,http.StatusOK,o)
+	if err != nil {
+		common.WriteError(w, http.StatusInternalServerError, err.Error())
+	}
+
+	common.WriteJSON(w, http.StatusOK, o)
 }
 
 func (h *handler) registerRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/customers/{customerID}/orders", h.handleCreateOrder)
+}
+
+func ValidateItems(items []*pb.ItemsWithQuantity) error {
+
+	if len(items) == 0 {
+		return errors.New("")
+	}
+
+	for _, i := range items {
+		if i.ID == "" {
+			return errors.New("")
+		}
+		if i.Quantity <= 0 {
+			return errors.New("")
+		}
+	}
+
+	return nil
 }
