@@ -21,29 +21,28 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type CreateOrderResponse struct {
+type CheckIfItemIsInStockResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	OrderId       string                 `protobuf:"bytes,1,opt,name=OrderId,proto3" json:"OrderId,omitempty"`
-	Status        string                 `protobuf:"bytes,2,opt,name=Status,proto3" json:"Status,omitempty"`
-	Price         int32                  `protobuf:"varint,3,opt,name=Price,proto3" json:"Price,omitempty"`
+	IsAvailable   bool                   `protobuf:"varint,1,opt,name=IsAvailable,proto3" json:"IsAvailable,omitempty"`
+	Items         []*Items               `protobuf:"bytes,2,rep,name=Items,proto3" json:"Items,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CreateOrderResponse) Reset() {
-	*x = CreateOrderResponse{}
+func (x *CheckIfItemIsInStockResponse) Reset() {
+	*x = CheckIfItemIsInStockResponse{}
 	mi := &file_api_oms_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CreateOrderResponse) String() string {
+func (x *CheckIfItemIsInStockResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CreateOrderResponse) ProtoMessage() {}
+func (*CheckIfItemIsInStockResponse) ProtoMessage() {}
 
-func (x *CreateOrderResponse) ProtoReflect() protoreflect.Message {
+func (x *CheckIfItemIsInStockResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_api_oms_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -55,30 +54,23 @@ func (x *CreateOrderResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrderResponse.ProtoReflect.Descriptor instead.
-func (*CreateOrderResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use CheckIfItemIsInStockResponse.ProtoReflect.Descriptor instead.
+func (*CheckIfItemIsInStockResponse) Descriptor() ([]byte, []int) {
 	return file_api_oms_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *CreateOrderResponse) GetOrderId() string {
+func (x *CheckIfItemIsInStockResponse) GetIsAvailable() bool {
 	if x != nil {
-		return x.OrderId
+		return x.IsAvailable
 	}
-	return ""
+	return false
 }
 
-func (x *CreateOrderResponse) GetStatus() string {
+func (x *CheckIfItemIsInStockResponse) GetItems() []*Items {
 	if x != nil {
-		return x.Status
+		return x.Items
 	}
-	return ""
-}
-
-func (x *CreateOrderResponse) GetPrice() int32 {
-	if x != nil {
-		return x.Price
-	}
-	return 0
+	return nil
 }
 
 type ItemsWithQuantity struct {
@@ -133,6 +125,50 @@ func (x *ItemsWithQuantity) GetQuantity() int32 {
 	return 0
 }
 
+type CheckIfItemIsInStockRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*ItemsWithQuantity   `protobuf:"bytes,1,rep,name=Items,proto3" json:"Items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckIfItemIsInStockRequest) Reset() {
+	*x = CheckIfItemIsInStockRequest{}
+	mi := &file_api_oms_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckIfItemIsInStockRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckIfItemIsInStockRequest) ProtoMessage() {}
+
+func (x *CheckIfItemIsInStockRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_oms_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckIfItemIsInStockRequest.ProtoReflect.Descriptor instead.
+func (*CheckIfItemIsInStockRequest) Descriptor() ([]byte, []int) {
+	return file_api_oms_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *CheckIfItemIsInStockRequest) GetItems() []*ItemsWithQuantity {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
 type CreateOrderRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	CustomerID    string                 `protobuf:"bytes,1,opt,name=customerID,proto3" json:"customerID,omitempty"`
@@ -143,7 +179,7 @@ type CreateOrderRequest struct {
 
 func (x *CreateOrderRequest) Reset() {
 	*x = CreateOrderRequest{}
-	mi := &file_api_oms_proto_msgTypes[2]
+	mi := &file_api_oms_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -155,7 +191,7 @@ func (x *CreateOrderRequest) String() string {
 func (*CreateOrderRequest) ProtoMessage() {}
 
 func (x *CreateOrderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_oms_proto_msgTypes[2]
+	mi := &file_api_oms_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -168,7 +204,7 @@ func (x *CreateOrderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateOrderRequest.ProtoReflect.Descriptor instead.
 func (*CreateOrderRequest) Descriptor() ([]byte, []int) {
-	return file_api_oms_proto_rawDescGZIP(), []int{2}
+	return file_api_oms_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CreateOrderRequest) GetCustomerID() string {
@@ -197,7 +233,7 @@ type Items struct {
 
 func (x *Items) Reset() {
 	*x = Items{}
-	mi := &file_api_oms_proto_msgTypes[3]
+	mi := &file_api_oms_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -209,7 +245,7 @@ func (x *Items) String() string {
 func (*Items) ProtoMessage() {}
 
 func (x *Items) ProtoReflect() protoreflect.Message {
-	mi := &file_api_oms_proto_msgTypes[3]
+	mi := &file_api_oms_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -222,7 +258,7 @@ func (x *Items) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Items.ProtoReflect.Descriptor instead.
 func (*Items) Descriptor() ([]byte, []int) {
-	return file_api_oms_proto_rawDescGZIP(), []int{3}
+	return file_api_oms_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Items) GetID() string {
@@ -265,7 +301,7 @@ type Order struct {
 
 func (x *Order) Reset() {
 	*x = Order{}
-	mi := &file_api_oms_proto_msgTypes[4]
+	mi := &file_api_oms_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -277,7 +313,7 @@ func (x *Order) String() string {
 func (*Order) ProtoMessage() {}
 
 func (x *Order) ProtoReflect() protoreflect.Message {
-	mi := &file_api_oms_proto_msgTypes[4]
+	mi := &file_api_oms_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -290,7 +326,7 @@ func (x *Order) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Order.ProtoReflect.Descriptor instead.
 func (*Order) Descriptor() ([]byte, []int) {
-	return file_api_oms_proto_rawDescGZIP(), []int{4}
+	return file_api_oms_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *Order) GetID() string {
@@ -325,14 +361,16 @@ var File_api_oms_proto protoreflect.FileDescriptor
 
 const file_api_oms_proto_rawDesc = "" +
 	"\n" +
-	"\rapi/oms.proto\x12\x03api\"]\n" +
-	"\x13CreateOrderResponse\x12\x18\n" +
-	"\aOrderId\x18\x01 \x01(\tR\aOrderId\x12\x16\n" +
-	"\x06Status\x18\x02 \x01(\tR\x06Status\x12\x14\n" +
-	"\x05Price\x18\x03 \x01(\x05R\x05Price\"?\n" +
+	"\rapi/oms.proto\x12\x03api\"b\n" +
+	"\x1cCheckIfItemIsInStockResponse\x12 \n" +
+	"\vIsAvailable\x18\x01 \x01(\bR\vIsAvailable\x12 \n" +
+	"\x05Items\x18\x02 \x03(\v2\n" +
+	".api.ItemsR\x05Items\"?\n" +
 	"\x11ItemsWithQuantity\x12\x0e\n" +
 	"\x02ID\x18\x01 \x01(\tR\x02ID\x12\x1a\n" +
-	"\bQuantity\x18\x02 \x01(\x05R\bQuantity\"b\n" +
+	"\bQuantity\x18\x02 \x01(\x05R\bQuantity\"K\n" +
+	"\x1bCheckIfItemIsInStockRequest\x12,\n" +
+	"\x05Items\x18\x01 \x03(\v2\x16.api.ItemsWithQuantityR\x05Items\"b\n" +
 	"\x12CreateOrderRequest\x12\x1e\n" +
 	"\n" +
 	"customerID\x18\x01 \x01(\tR\n" +
@@ -353,7 +391,9 @@ const file_api_oms_proto_rawDesc = "" +
 	".api.ItemsR\x05Items2B\n" +
 	"\fOrderService\x122\n" +
 	"\vCreateOrder\x12\x17.api.CreateOrderRequest\x1a\n" +
-	".api.OrderB.Z,github/ammar-alaa/order-mangement/common/apib\x06proto3"
+	".api.Order2h\n" +
+	"\fStockService\x12X\n" +
+	"\x11CheckOrderInStock\x12 .api.CheckIfItemIsInStockRequest\x1a!.api.CheckIfItemIsInStockResponseB.Z,github/ammar-alaa/order-mangement/common/apib\x06proto3"
 
 var (
 	file_api_oms_proto_rawDescOnce sync.Once
@@ -367,24 +407,29 @@ func file_api_oms_proto_rawDescGZIP() []byte {
 	return file_api_oms_proto_rawDescData
 }
 
-var file_api_oms_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_api_oms_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_api_oms_proto_goTypes = []any{
-	(*CreateOrderResponse)(nil), // 0: api.CreateOrderResponse
-	(*ItemsWithQuantity)(nil),   // 1: api.ItemsWithQuantity
-	(*CreateOrderRequest)(nil),  // 2: api.CreateOrderRequest
-	(*Items)(nil),               // 3: api.Items
-	(*Order)(nil),               // 4: api.Order
+	(*CheckIfItemIsInStockResponse)(nil), // 0: api.CheckIfItemIsInStockResponse
+	(*ItemsWithQuantity)(nil),            // 1: api.ItemsWithQuantity
+	(*CheckIfItemIsInStockRequest)(nil),  // 2: api.CheckIfItemIsInStockRequest
+	(*CreateOrderRequest)(nil),           // 3: api.CreateOrderRequest
+	(*Items)(nil),                        // 4: api.Items
+	(*Order)(nil),                        // 5: api.Order
 }
 var file_api_oms_proto_depIdxs = []int32{
-	1, // 0: api.CreateOrderRequest.Items:type_name -> api.ItemsWithQuantity
-	3, // 1: api.Order.Items:type_name -> api.Items
-	2, // 2: api.OrderService.CreateOrder:input_type -> api.CreateOrderRequest
-	4, // 3: api.OrderService.CreateOrder:output_type -> api.Order
-	3, // [3:4] is the sub-list for method output_type
-	2, // [2:3] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	4, // 0: api.CheckIfItemIsInStockResponse.Items:type_name -> api.Items
+	1, // 1: api.CheckIfItemIsInStockRequest.Items:type_name -> api.ItemsWithQuantity
+	1, // 2: api.CreateOrderRequest.Items:type_name -> api.ItemsWithQuantity
+	4, // 3: api.Order.Items:type_name -> api.Items
+	3, // 4: api.OrderService.CreateOrder:input_type -> api.CreateOrderRequest
+	2, // 5: api.StockService.CheckOrderInStock:input_type -> api.CheckIfItemIsInStockRequest
+	5, // 6: api.OrderService.CreateOrder:output_type -> api.Order
+	0, // 7: api.StockService.CheckOrderInStock:output_type -> api.CheckIfItemIsInStockResponse
+	6, // [6:8] is the sub-list for method output_type
+	4, // [4:6] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_api_oms_proto_init() }
@@ -398,9 +443,9 @@ func file_api_oms_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_oms_proto_rawDesc), len(file_api_oms_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_api_oms_proto_goTypes,
 		DependencyIndexes: file_api_oms_proto_depIdxs,
