@@ -10,18 +10,24 @@ service OrderService {
   rpc CreateOrder(CreateOrderRequest) returns (Order);
 }
 
+service StockService {
+  rpc CheckOrderInStock(CheckIfItemIsInStockRequest) returns (CheckIfItemIsInStockResponse);
+}
 
-
-message CreateOrderResponse {
-  string OrderId = 1;
-  string Status = 2;
-  int32 Price = 3;
+message CheckIfItemIsInStockResponse {
+  bool IsAvailable = 1;
+  repeated Items Items = 2;
 }
 
 message ItemsWithQuantity {
   string ID = 1;
   int32 Quantity = 2;
 }
+
+message CheckIfItemIsInStockRequest {
+  repeated ItemsWithQuantity Items = 1;
+}
+
 
 message CreateOrderRequest {
   string customerID = 1;
