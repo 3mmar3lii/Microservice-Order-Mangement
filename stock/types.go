@@ -18,10 +18,10 @@ type StockOrderResponse struct {
 
 // Buss logic
 type StockService interface {
-	CheckOrderInStock(context.Context, StockOrderRequest) (StockOrderResponse, error)
+	CheckOrderInStock(context.Context, StockOrderRequest) (*StockOrderResponse, error)
 }
 
 // DB
 type StockStore interface {
-	Create(context.Context)  error
+	CheckOrderInStockStore(context.Context, StockOrderRequest) (*StockOrderResponse, error)
 }

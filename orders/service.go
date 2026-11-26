@@ -34,7 +34,9 @@ func (s *service) CreateOrder(ctx context.Context,
 		return Order{}, err
 	}
 
-	return Order{
-		ID:res.Items[0].ID ,
-	}, nil
+	if res == nil || len(res.Items) == 0 || res.Items[0] == nil {
+		return Order{}, nil
+	}
+
+	return Order{ID: res.Items[0].ID}, nil
 }
