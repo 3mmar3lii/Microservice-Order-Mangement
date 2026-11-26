@@ -1,18 +1,24 @@
 package main
 
-import "context"
+import (
+	"context"
 
-type store struct {
-	// DB connection
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+type PostgresOrderStore struct {
+	pgxpool *pgxpool.Pool
 }
 
-func NewStore(context.Context) *store {
-	return &store{}
+func NewPostgresOrderStore(ctx context.Context, pool *pgxpool.Pool) *PostgresOrderStore {
+	return &PostgresOrderStore{pool}
 }
 
-func (s *store) Create(context.Context) error {
+func (s *PostgresOrderStore) Create(ctx context.Context,OrderRequest CreateOrderRequest ) error {
+	// Write query to save order to db 
+	// check on the order request data + validate
+
 	return nil
 }
-
 
 

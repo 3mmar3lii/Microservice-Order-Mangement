@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -19,41 +18,67 @@ func NewPostgresStore(db *pgxpool.Pool) *PostgresStockStore {
 }
 
 func (s *PostgresStockStore) CheckOrderInStockStore(ctx context.Context, items StockOrderRequest) (*StockOrderResponse, error) {
-
 	log.Printf("Checking in the stock store ..... %v", items)
 
 	emptyStockResponse := &StockOrderResponse{
 		IsAvailable: false,
-		Items:       make([]Item, 0),
+		Items:       make([]StockOrderItem, 0),
 	}
 
 	if len(items.Items) == 0 {
 		return emptyStockResponse, errors.New("order has no items to check")
 	}
 
-	query := `SELECT quantity FROM products WHERE id = $1;`
-
+	productIDs := make([]string, 0, len(items.Items))
+	requestedQuantityByID := make(map[string]int64, len(items.Items))
 	for _, item := range items.Items {
 		if item.Quantity <= 0 {
 			return emptyStockResponse, fmt.Errorf("invalid quantity for product %s", item.ID)
 		}
+		productIDs = append(productIDs, item.ID)
+		requestedQuantityByID[item.ID] += int64(item.Quantity)
+	}
 
-		var availableQty int
-		err := s.db.QueryRow(ctx, query, item.ID).Scan(&availableQty)
-		if err != nil {
-			if errors.Is(err, pgx.ErrNoRows) {
-				return emptyStockResponse, nil
-			}
-			return emptyStockResponse, fmt.Errorf("query product %s: %w", item.ID, err)
+	query := `SELECT id, quantity, unit_price_minor, currency_code
+	FROM public.products
+	WHERE id = ANY($1);`
+
+	rows, err := s.db.Query(ctx, query, productIDs)
+	if err != nil {
+		return emptyStockResponse, fmt.Errorf("query products: %w", err)
+	}
+	defer rows.Close()
+
+	productsByID := make(map[string]StockOrderItem, len(productIDs))
+	for rows.Next() {
+		var product StockOrderItem
+		if err := rows.Scan(
+			&product.ID,
+			&product.Quantity,
+			&product.UnitPriceMinor,
+			&product.CurrencyCode,
+		); err != nil {
+			return emptyStockResponse, fmt.Errorf("scan product row: %w", err)
 		}
+		productsByID[product.ID] = product
+	}
 
-		if availableQty < int(item.Quantity) {
+	if err := rows.Err(); err != nil {
+		return emptyStockResponse, fmt.Errorf("iterate product rows: %w", err)
+	}
+
+	responseItems := make([]StockOrderItem, 0, len(items.Items))
+	for _, item := range items.Items {
+		product, exists := productsByID[item.ID]
+		if !exists || int64(product.Quantity) < requestedQuantityByID[item.ID] {
 			return emptyStockResponse, nil
 		}
+		product.Quantity = item.Quantity
+		responseItems = append(responseItems, product)
 	}
 
 	return &StockOrderResponse{
 		IsAvailable: true,
-		Items:       items.Items,
+		Items:       responseItems,
 	}, nil
 }

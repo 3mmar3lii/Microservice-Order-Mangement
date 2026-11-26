@@ -27,12 +27,12 @@ func (h *grpcHandler) CheckOrderInStock(ctx context.Context,
 		return nil, status.Error(codes.InvalidArgument, "order request is required")
 	}
 
-	items := make([]Item, 0, len(orderRequest.Items))
+	items := make([]StockOrderRequestItem, 0, len(orderRequest.Items))
 	for _, item := range orderRequest.Items {
 		if item == nil {
 			return nil, status.Error(codes.InvalidArgument, "order request contains a nil item")
 		}
-		items = append(items, Item{
+		items = append(items, StockOrderRequestItem{
 			ID:       item.ID,
 			Quantity: item.Quantity,
 		})
