@@ -10,16 +10,21 @@ import (
 
 	pb "github.com/ammar-alaa/common/api"
 	grpcutil "github.com/ammar-alaa/common/grpc"
+	postgres "github.com/ammar-alaa/common/postgres"
 )
 
 var (
-	grpcAddr  = common.EnvString("GRPC_ADDR", "localhost:2000")
-	stockAddr = common.EnvString("STOCK_ADDR", "localhost:2001")
+	grpcAddr     = common.EnvString("GRPC_ADDR", "localhost:2000")
+	stockAddrStr = common.EnvString("STOCK_ADDR", "localhost:2001")
 )
 
 func main() {
-
-	conn, err := grpcutil.Dial(stockAddr)
+	ctx := context.Background()
+	pool, err := postgres.NewPool(ctx, stockAddrStr)
+	if err != nil {
+		log.Fatalf("failed to connect to order db: %v", err)
+	}
+	conn, err := grpcutil.Dial(grpcAddr)
 	if err != nil {
 		log.Fatal("Error while opening the stock service connection ", err)
 	}
@@ -27,7 +32,7 @@ func main() {
 	stockClient := pb.NewStockServiceClient(conn)
 
 	// Store creation
-	store := NewStore(context.Background())
+	store := NewPostgresOrderStore(ctx, pool)
 	// Pass store to service layer
 	svc := NewService(store, stockClient)
 
@@ -51,6 +56,7 @@ func main() {
 	defer func() {
 		lis.Close()
 		conn.Close()
+		pool.Close()
 	}()
 
 }

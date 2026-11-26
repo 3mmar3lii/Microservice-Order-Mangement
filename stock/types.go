@@ -2,18 +2,25 @@ package main
 
 import "context"
 
-type Item struct {
+type StockOrderRequestItem struct {
 	ID       string
 	Quantity int32
 }
 
 type StockOrderRequest struct {
-	Items []Item
+	Items []StockOrderRequestItem
+}
+
+type StockOrderItem struct {
+	ID             string
+	Quantity       int32
+	UnitPriceMinor int64
+	CurrencyCode   string
 }
 
 type StockOrderResponse struct {
 	IsAvailable bool
-	Items       []Item
+	Items       []StockOrderItem
 }
 
 // Buss logic

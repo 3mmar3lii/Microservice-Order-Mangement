@@ -38,5 +38,14 @@ func (s *service) CreateOrder(ctx context.Context,
 		return Order{}, nil
 	}
 
+	// Call Order Store to truly store Orde with status pending 
+	// in postgress order table
+	if res.IsAvailable {
+		err :=s.store.Create(ctx,OrderRequest)
+		if err != nil {
+			// write good error and return it explcicty 
+		}
+	}
+
 	return Order{ID: res.Items[0].ID}, nil
 }

@@ -28,5 +28,5 @@ type OrderService interface {
 
 // Store Interface for DB
 type OrderStore interface {
-	Create(context.Context) error
+	Create(context.Context, CreateOrderRequest) error
 }
