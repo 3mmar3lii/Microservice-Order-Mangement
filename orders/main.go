@@ -8,12 +8,12 @@ import (
 	"github.com/ammar-alaa/common"
 	"google.golang.org/grpc"
 
-	grpcutil "github.com/ammar-alaa/common/grpc"
 	pb "github.com/ammar-alaa/common/api"
+	grpcutil "github.com/ammar-alaa/common/grpc"
 )
 
 var (
-	grpcAddr  = common.EnvString("grpcAddr", "localhost:2000")
+	grpcAddr  = common.EnvString("GRPC_ADDR", "localhost:2000")
 	stockAddr = common.EnvString("STOCK_ADDR", "localhost:2001")
 )
 
@@ -21,7 +21,7 @@ func main() {
 
 	conn, err := grpcutil.Dial(stockAddr)
 	if err != nil {
-
+		log.Fatal("Error while opening the stock service connection ", err)
 	}
 
 	stockClient := pb.NewStockServiceClient(conn)
@@ -29,7 +29,7 @@ func main() {
 	// Store creation
 	store := NewStore(context.Background())
 	// Pass store to service layer
-	svc := NewService(store,stockClient)
+	svc := NewService(store, stockClient)
 
 	// 1. Initialize TCP listener on port 2000
 	lis, err := net.Listen("tcp", grpcAddr)
