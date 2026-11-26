@@ -6,16 +6,24 @@ import (
 	"net"
 
 	"github.com/ammar-alaa/common"
+	postgres "github.com/ammar-alaa/common/postgres"
 	"google.golang.org/grpc"
 )
 
 var (
-	OrderAddrs = common.EnvString("OrderAddrs", "localhost:2001")
+	OrderAddrs   = common.EnvString("OrderAddrs", "localhost:2001")
+	StockConnStr = common.EnvString("STOCK_DB_URL", "postgres://ammar:secret@localhost:5432/stock_db?sslmode=disable")
 )
 
 func main() {
 
-	store := NewStore(context.Background())
+	ctx := context.Background()
+	pool, err := postgres.NewPool(ctx, StockConnStr)
+	if err != nil {
+		log.Fatalf("failed to connect to stock db: %v", err)
+	}
+
+	store := NewPostgresStore(pool)
 	svc := NewStockService(store)
 
 	// gRPC server here -> get request order from order service
@@ -28,13 +36,13 @@ func main() {
 		if err := lis.Close(); err != nil {
 			log.Fatalf("Failed to close grpc connection in Stock Service :%v", err.Error())
 		}
+		pool.Close()
 	}()
 
 	grpcServer := grpc.NewServer()
 	NewGRPCHandler(grpcServer, svc)
 
-
-	log.Print("GRPC server start!",OrderAddrs)
+	log.Print("GRPC server start!", OrderAddrs)
 
 	// listen
 	if err := grpcServer.Serve(lis); err != nil {

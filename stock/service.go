@@ -11,17 +11,20 @@ type Service struct {
 
 func NewStockService(store StockStore) *Service {
 
-	return &Service{}
+	return &Service{store}
 }
 
-func (s *Service) CheckOrderInStock(ctx context.Context, orderInStock StockOrderRequest) (StockOrderResponse, error) {
+func (s *Service) CheckOrderInStock(ctx context.Context, orderInStock StockOrderRequest) (*StockOrderResponse, error) {
 
-	items := []Item{
-		{ID: "1", Quantity: 3},
-	}
 	log.Print("Checking in the stock .....")
-	return StockOrderResponse{
-		IsAvailable: true,
-		Items:       items,
+
+	stockRes, err := s.store.CheckOrderInStockStore(ctx, orderInStock)
+	if err != nil {
+		return &StockOrderResponse{}, err
+	}
+
+	return &StockOrderResponse{
+		IsAvailable: stockRes.IsAvailable,
+		Items:       stockRes.Items,
 	}, nil
 }
