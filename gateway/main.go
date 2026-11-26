@@ -4,21 +4,20 @@ import (
 	"log"
 	"net/http"
 
+	grpcutil "github.com/ammar-alaa/common/grpc"
 	"github.com/ammar-alaa/common"
 	_ "github.com/joho/godotenv/autoload"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	pb "github.com/ammar-alaa/common/api"
 )
 
 var (
 	httpAddr         = common.EnvString("HTTP_ADDR", ":3000")
-	orderServiceAddr = "localhost:2000"
+	orderServiceAddr = common.EnvString("ORDER_ADDR","localhost:2000")
 )
 
 func main() {
 
-	conn, err := grpc.NewClient(orderServiceAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpcutil.Dial(orderServiceAddr)
 	if err != nil {
 		log.Fatal("Error while opening the order service connection ",err)
 	}

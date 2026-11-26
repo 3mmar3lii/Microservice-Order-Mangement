@@ -14,6 +14,13 @@ service StockService {
   rpc CheckOrderInStock(CheckIfItemIsInStockRequest) returns (CheckIfItemIsInStockResponse);
 }
 
+message Items {
+  string ID = 1;
+  string Name = 2;
+  int32 Quantity = 3;
+  string PriceID = 4;
+}
+
 message CheckIfItemIsInStockResponse {
   bool IsAvailable = 1;
   repeated Items Items = 2;
@@ -34,12 +41,7 @@ message CreateOrderRequest {
   repeated ItemsWithQuantity Items = 2;
 }
 
-message Items {
-  string ID = 1;
-  string Name = 2;
-  int32 Quantity = 3;
-  string PriceID = 4;
-}
+
 
 message Order {
   string ID = 1;

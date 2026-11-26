@@ -2,12 +2,12 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/ammar-alaa/common"
 	pb "github.com/ammar-alaa/common/api"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	grpcutil "github.com/ammar-alaa/common/grpc"
 )
 
 type handler struct {
@@ -28,8 +28,8 @@ func (h *handler) handleCreateOrder(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := ValidateItems(items); err != nil {
-		common.WriteError(w,http.StatusBadRequest,err.Error())
-		return 
+		common.WriteError(w, http.StatusBadRequest, err.Error())
+		return
 	}
 
 	o, err := h.client.CreateOrder(r.Context(), &pb.CreateOrderRequest{
@@ -37,16 +37,9 @@ func (h *handler) handleCreateOrder(w http.ResponseWriter, r *http.Request) {
 		Items:      items,
 	})
 
-	// Handling gRPC error 
-if err != nil {
-    rStatus := status.Convert(err)
-    if rStatus.Code() == codes.InvalidArgument {
-        common.WriteError(w, http.StatusBadRequest, rStatus.Message())
-        return
-    }
-    common.WriteError(w, http.StatusInternalServerError, err.Error())
-    return
-}
+	if grpcError := grpcutil.GRPCError(w, err); grpcError != nil {
+		return
+	}
 
 	common.WriteJSON(w, http.StatusOK, o)
 }
@@ -58,15 +51,20 @@ func (h *handler) registerRoutes(mux *http.ServeMux) {
 func ValidateItems(items []*pb.ItemsWithQuantity) error {
 
 	if len(items) == 0 {
-		return errors.New("")
+		return errors.New("items list cannot be empty")
 	}
 
-	for _, i := range items {
-		if i.ID == "" {
-			return errors.New("")
+	for idx, item := range items {
+		if item.ID == "" {
+			return errors.New("item ID cannot be empty")
 		}
-		if i.Quantity <= 0 {
-			return errors.New("")
+
+		if item.Quantity <= 0 {
+			return errors.New("item quantity must be greater than zero")
+		}
+
+		if item == nil {
+			return fmt.Errorf("item at index %d cannot be nil", idx)
 		}
 	}
 
