@@ -12,5 +12,25 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./docker/postgres/init/01-create-stock-db.sql:/docker-entrypoint-initdb.d/01-create-stock-db.sql:ro
 
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    container_name: oms_rabbitmq
+    hostname: oms_rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ammar
+      RABBITMQ_DEFAULT_PASS: secret
+    ports:
+      - "5672:5672"   # AMQP port for your Go services (orders & stock)
+      - "15672:15672" # Visual Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
 volumes:
   postgres_data:
+  rabbitmq_data:
