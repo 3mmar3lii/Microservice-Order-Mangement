@@ -46,8 +46,11 @@ func (h *grpcHandler) CheckOrderInStock(ctx context.Context,
 	responseItems := make([]*pb.Items, 0, len(stockResponse.Items))
 	for _, item := range stockResponse.Items {
 		responseItems = append(responseItems, &pb.Items{
-			ID:       item.ID,
-			Quantity: item.Quantity,
+			ID:             item.ID,
+			Name:           item.Name,
+			Quantity:       item.Quantity,
+			UnitPriceMinor: item.UnitPriceMinor,
+			CurrencyCode:   item.CurrencyCode,
 		})
 	}
 

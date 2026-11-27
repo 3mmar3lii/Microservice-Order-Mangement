@@ -6,6 +6,7 @@ import (
 	"net"
 
 	"github.com/ammar-alaa/common"
+	_ "github.com/joho/godotenv/autoload"
 	postgres "github.com/ammar-alaa/common/postgres"
 	"google.golang.org/grpc"
 )

@@ -1,0 +1,2 @@
+ALTER TABLE public.order_items
+    ADD COLUMN IF NOT EXISTS name TEXT NOT NULL DEFAULT '';

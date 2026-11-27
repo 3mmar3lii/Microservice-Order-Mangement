@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	pb "github.com/ammar-alaa/common/api"
 )
@@ -34,18 +36,37 @@ func (s *service) CreateOrder(ctx context.Context,
 		return Order{}, err
 	}
 
-	if res == nil || len(res.Items) == 0 || res.Items[0] == nil {
-		return Order{}, nil
+	if res == nil {
+		return Order{}, errors.New("stock service returned an empty response")
 	}
 
-	// Call Order Store to truly store Orde with status pending 
-	// in postgress order table
-	if res.IsAvailable {
-		err :=s.store.Create(ctx,OrderRequest)
-		if err != nil {
-			// write good error and return it explcicty 
+	if !res.IsAvailable {
+		return Order{}, errors.New("one or more items are unavailable")
+	}
+
+	if len(res.Items) != len(OrderRequest.Items) {
+		return Order{}, errors.New("stock service returned an unexpected number of items")
+	}
+
+	OrderRequest.Items = make([]Item, 0, len(res.Items))
+	for _, item := range res.Items {
+		if item == nil {
+			return Order{}, errors.New("stock service returned an empty item")
 		}
+
+		OrderRequest.Items = append(OrderRequest.Items, Item{
+			ID:             item.ID,
+			Quantity:       item.Quantity,
+			Name:           item.Name,
+			UnitPriceMinor: item.UnitPriceMinor,
+			CurrencyCode:   item.CurrencyCode,
+		})
 	}
 
-	return Order{ID: res.Items[0].ID}, nil
+	order, err := s.store.Create(ctx, OrderRequest)
+	if err != nil {
+		return Order{}, fmt.Errorf("create order: %w", err)
+	}
+
+	return order, nil
 }

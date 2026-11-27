@@ -1,13 +1,15 @@
 package main
 
 import (
-
 	"context"
 )
 
 type Item struct {
-	ID       string
-	Quantity int32
+	ID             string
+	Quantity       int32
+	Name           string
+	CurrencyCode   string
+	UnitPriceMinor int64
 }
 
 type CreateOrderRequest struct {
@@ -21,6 +23,7 @@ type Order struct {
 	Status     string
 	Items      []Item
 }
+
 // Store Interface for Service layer - Bussiness
 type OrderService interface {
 	CreateOrder(context.Context, CreateOrderRequest) (Order, error)
@@ -28,5 +31,5 @@ type OrderService interface {
 
 // Store Interface for DB
 type OrderStore interface {
-	Create(context.Context, CreateOrderRequest) error
+	Create(context.Context, CreateOrderRequest) (Order, error)
 }

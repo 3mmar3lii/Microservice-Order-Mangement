@@ -39,7 +39,7 @@ func (s *PostgresStockStore) CheckOrderInStockStore(ctx context.Context, items S
 		requestedQuantityByID[item.ID] += int64(item.Quantity)
 	}
 
-	query := `SELECT id, quantity, unit_price_minor, currency_code
+	query := `SELECT id, name, quantity, unit_price_minor, currency_code
 	FROM public.products
 	WHERE id = ANY($1);`
 
@@ -54,6 +54,7 @@ func (s *PostgresStockStore) CheckOrderInStockStore(ctx context.Context, items S
 		var product StockOrderItem
 		if err := rows.Scan(
 			&product.ID,
+			&product.Name,
 			&product.Quantity,
 			&product.UnitPriceMinor,
 			&product.CurrencyCode,

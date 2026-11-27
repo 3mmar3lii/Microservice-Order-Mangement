@@ -37,14 +37,26 @@ func (h *grpcHandler) CreateOrder(c context.Context, orderRequest *pb.CreateOrde
 		Items:      items,
 	}
 	// Delegate work to the order service real buss logic
-	order, err :=h.service.CreateOrder(c, req)
+	order, err := h.service.CreateOrder(c, req)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
-	
+
+	orderItems := make([]*pb.Items, 0, len(order.Items))
+	for _, item := range order.Items {
+		orderItems = append(orderItems, &pb.Items{
+			ID:             item.ID,
+			Quantity:       item.Quantity,
+			Name:           item.Name,
+			UnitPriceMinor: item.UnitPriceMinor,
+			CurrencyCode:   item.CurrencyCode,
+		})
+	}
+
 	return &pb.Order{
 		ID:         order.ID,
 		CustomerID: order.CustomerID,
 		Status:     order.Status,
+		Items:      orderItems,
 	}, nil
 }

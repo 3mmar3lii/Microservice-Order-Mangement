@@ -6,3 +6,7 @@
 --}
 
 -- Write table for order to save data if order table not exist
+CREATE TABLE IF NOT EXISTS public.orders (
+  id TEXT PRIMARY KEY,
+  CustomerID TEXT
+)

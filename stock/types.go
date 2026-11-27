@@ -13,6 +13,7 @@ type StockOrderRequest struct {
 
 type StockOrderItem struct {
 	ID             string
+	Name           string
 	Quantity       int32
 	UnitPriceMinor int64
 	CurrencyCode   string
